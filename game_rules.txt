@@ -1,0 +1,46 @@
+safe(X,Y) :- noWumpus(X,Y),noPit(X,Y),not(visited(X,Y)),adjacent(X,Y).
+safe(X,Y) :- deadWumpus(X,Y), not visited(X,Y), noPit(X,Y),adjacent(X,Y).
+noPit(X,Y) :- not breezeLeft(X,Y) , Y > 0, visited(X,Z), Z is Y-1.
+noPit(X,Y) :- not breezeDown(X,Y) , X < 7, visited(Z,Y), Z is X+1.
+noPit(X,Y) :- not breezeRight(X,Y) , Y < 7, visited(X,Z), Z is Y+1.
+noPit(X,Y) :- not breezeUp(X,Y) , X > 0, visited(Z,Y), Z is X - 1.
+noWumpus(X,Y) :- not smellLeft(X,Y) , Y > 0, visited(X,Z), Z is Y-1.
+noWumpus(X,Y) :- not smellDown(X,Y) , X < 7, visited(Z,Y), Z is X+1.
+noWumpus(X,Y) :- not smellRight(X,Y) , Y < 7, visited(X,Z), Z is Y+1.
+noWumpus(X,Y) :- not smellUp(X,Y) , X > 0, visited(Z,Y), Z is X-1.
+noWumpus(X,Y) :- deadWumpus(X,Y).
+breezeUp(X,Y) :- breeze(Z,Y), Z is X - 1.
+breezeDown(X,Y) :- breeze(Z,Y), Z is X+1.
+breezeLeft(X,Y) :- breeze(X,Z),  Z is Y-1.
+breezeRight(X,Y) :- breeze(X,Z),  Z is Y+1.
+
+adjacent(X,Y) :- visited(K,Y), K is X-1.
+adjacent(X,Y) :- visited(K,Y), K is X+1.
+adjacent(X,Y) :- visited(X,K), K is Y-1.
+adjacent(X,Y) :- visited(X,K), K is Y+1.
+
+
+smellUp(X,Y) :- smell(Z,Y), Z is X-1.
+smellDown(X,Y) :- smell(Z,Y), Z is X+1.
+smellLeft(X,Y) :- smell(X,Z), Z is Y-1.
+smellRight(X,Y) :- smell(X,Z), Z is Y+1.
+
+wumpusFound(X,Y) :- smellUp(X,Y),smellDown(X,Y).
+wumpusFound(X,Y) :- smellLeft(X,Y),smellRight(X,Y).
+wumpusFound(X,Y) :- smellLeft(X,Y), smellDown(X,Y),visited(A,B),A is X + 1, B is Y - 1.
+wumpusFound(X,Y) :- smellRight(X,Y), smellDown(X,Y),visited(A,B),A is X + 1, B is Y + 1.
+wumpusFound(X,Y) :- smellLeft(X,Y), smellUp(X,Y),visited(A,B),A is X - 1, B is Y - 1.
+wumpusFound(X,Y) :- smellRight(X,Y), smellUp(X,Y),visited(A,B),A is X - 1, B is Y + 1.
+
+agentInitPos(0,0).
+
+
+smell(Y,X) :- wumpus(Y,Z),Z is X-1.
+smell(Y,X) :- wumpus(Y,Z),Z is X+1.
+smell(Y,X) :- wumpus(Z,X),Z is Y-1.
+smell(Y,X) :- wumpus(Z,X),Z is Y+1.
+
+breeze(Y,X) :- pit(Y,Z),Z is X-1.
+breeze(Y,X) :- pit(Y,Z),Z is X+1.
+breeze(Y,X) :- pit(Z,X),Z is Y-1.
+breeze(Y,X) :- pit(Z,X),Z is Y+1.
